@@ -18,10 +18,8 @@ inst = rm.open_resource("TCPIP::"+args.address+"::INSTR")
 print(inst.query("*IDN?"))
 
 #sent start control message
-message="Starting control"
+message="Controlling Remotely"
 inst.write("DISP:TEXT '"+message+"'")
-sleep(1)
-inst.write("DISP:TEXT ''")
 
 
 #clear any sweeps
@@ -37,8 +35,4 @@ for line in open(args.filename):
     print(line.strip())
 
 
-#send end control message
-message="Ending control"
-inst.write("DISP:TEXT '"+message+"'")
-sleep(1)
 inst.write("DISP:TEXT ''")
