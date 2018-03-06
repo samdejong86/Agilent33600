@@ -33,7 +33,7 @@ Install the pyVISA back and front end:
 
    UploadArb.py [-h] -f FILENAME [-a ADDRESS] [-v PULSEHEIGHT]
 
-      Send a list of messages to an Agilent 33600 AWG
+      Upload an arbitrary waveform to an Agilent 33600 AWG
 
       optional arguments:
         -h, --help            show this help message and exit

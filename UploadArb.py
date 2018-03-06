@@ -8,7 +8,7 @@ import os
 
 
 #parse arguments
-parser = argparse.ArgumentParser(description='Send a list of messages to an Agilent 33600 AWG')
+parser = argparse.ArgumentParser(description='Upload an arbitrary waveform to an Agilent 33600 AWG')
 parser.add_argument('-f','--filename', help='File containing arbitrary waveform', default="./test.dat", required=True)
 parser.add_argument('-a','--address', help="Address of device", default="142.104.60.122", required=False)
 parser.add_argument('-v','--pulseheight', help="Pulse height of arb", default="0.1", required=False)
