@@ -41,6 +41,8 @@ instrument_err = "error"
 while instrument_err != '+0,"No error"\n':
     inst.write('SYST:ERR?')
     instrument_err = inst.read()
+    if instrument_err[:2] == "+0":
+        continue;
     print(instrument_err)
 
 
