@@ -20,14 +20,14 @@ Install the pyVISA back and front end:
 
 ## Usage
 
-   AgilentControl.py [-h] [-f FILENAME] [-a ADDRESS]
+   AgilentControl.py [-h] -f FILENAME [-a ADDRESS]
 
       Send a list of messages to an Agilent 33600 AWG
 
       optional arguments:
         -h, --help            show this help message and exit
         -f FILENAME, --filename FILENAME
-                              File containing SCPI commands
+                              Macro file containing SCPI commands
         -a ADDRESS, --address ADDRESS
                               Address of device
 
@@ -37,18 +37,18 @@ Install the pyVISA back and front end:
 
       optional arguments:
         -h, --help            show this help message and exit
-	-f FILENAME, --filename FILENAME
+        -f FILENAME, --filename FILENAME
                               File containing arbitrary waveform
         -a ADDRESS, --address ADDRESS
                               Address of device
         -v PULSEHEIGHT, --pulseheight PULSEHEIGHT
                               Pulse height of arb
- 
+        -m, --macro           Generate a macro for loading this arb
 
 
 ## Files
 
-    freqSweep.awg
+    freqSweep.awg 
        Sets a frequency sweep on channel 2
 
     arb.awg
