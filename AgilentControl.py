@@ -11,7 +11,7 @@ parser.add_argument('-l', '--line', help="A single command to send to the device
 args = parser.parse_args()
 
 if args.line == "" and args.filename == "":
-    parser.error("either --line or --filename must be specified")
+    parser.error("either -l or -f must be specified")
     
 
 
