@@ -55,13 +55,13 @@ Install the pyVISA back and front end:
        Loads the atlas calibration arb
 
     arbLoad.awg
-	Loads the atlas calibration arb into volatile memory
+       Loads the atlas calibration arb into volatile memory
 
     squareWave.awg
        Generates a square wave
 
     triangleWave.awg
-	Generates a triangle wave
+       Generates a triangle wave
 
     ATLASCALIB.dat
         Atlas calibration wave
