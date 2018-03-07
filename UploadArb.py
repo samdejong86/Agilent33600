@@ -18,12 +18,15 @@ parser.add_argument('-d','--delimiter', help="Input file delimiter", default=" "
 
 args = parser.parse_args()
 
+#can't pass '\t' in at the command line
 if args.delimiter=="tab":
     args.delimiter="\t"
 
 
-
+#remove file extension
 name=os.path.splitext(os.path.basename(args.filename))[0]
+
+#if the arb name is longer than 12, truncate it (maximum length allowed by SCPI interface)
 if len(name) > 12:
     name=name[:12]
     print("Arb name truncated to "+name)
@@ -33,18 +36,22 @@ samplePeriod=0
 num=0
 tlast=-1
 
+#load the arbitrary waveform
 arb=[]
 with open(args.filename,'r') as f:
     reader=csv.reader(f,delimiter=args.delimiter)
     for t,p in reader:
         arb.append(float(p))
         if tlast != -1:
-            samplePeriod=samplePeriod+(float(t)-float(tlast))
+            samplePeriod=samplePeriod+(float(t)-float(tlast)) #get difference between subsequent time bins
             num=num+1
         tlast=t
 
+#get sample rate
 samplePeriod=samplePeriod/num
 sRate=str(1/samplePeriod)
+
+#scale signal between 1 and -1
 sig = np.asarray(arb, dtype='f4')/max(arb)
 
 
@@ -60,45 +67,52 @@ print(inst.query("*IDN?"))
 message="Uploading\nArbitrary\nWaveform"
 inst.write("DISP:TEXT '"+message+"'")
 
-
+#create a directory on device (will generate error if the directory exists, but we can ignore that)
 inst.write("MMEMORY:MDIR \"INT:\\remoteAdded\"")
 
+#set byte order
 inst.write('FORM:BORD SWAP')
+
+#clear volatile memory
 inst.write('SOUR1:DATA:VOL:CLE')
 
+#write arb to device
 inst.write_binary_values('SOUR1:DATA:ARB '+name+',', sig, datatype='f', is_big_endian=False)
 
+#wait until that command is done
 inst.write('*WAI')
 
-
+#name the arb
 inst.write('SOUR1:FUNC:ARB '+name)
 
+#set sample rate, voltage
 inst.write('SOUR1:FUNC:ARB:SRAT ' + sRate)
 inst.write('SOUR1:VOLT:OFFS 0')
 inst.write('SOUR1:FUNC ARB')
 inst.write('SOUR1:VOLT '+args.pulseheight)
 
-
+#save arb to device internal memory
 inst.write('MMEM:STOR:DATA "INT:\\remoteAdded\\'+name+'.arb"')
 
+#clear message
 inst.write("DISP:TEXT ''")
 
-
+#check for error messages
 instrument_err = "error"
 while instrument_err != '+0,"No error"\n':
     inst.write('SYST:ERR?')
     instrument_err = inst.read()
-    if instrument_err[:4] == "-257":
+    if instrument_err[:4] == "-257":  #directory exists message, don't display
         continue;
-    if instrument_err[:2] == "+0":
+    if instrument_err[:2] == "+0":    #no error
         continue;
     print(instrument_err)
 
 
-
+#close device
 inst.close()
 
-
+#generate a macro to load this arb using AgilentControl.py
 if args.macro:
     macroFile = "load_"+name+".awg"
     with open(macroFile, 'w') as f:

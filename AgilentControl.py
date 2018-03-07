@@ -9,11 +9,9 @@ parser.add_argument('-a','--address', help="Address of device", default="142.104
 parser.add_argument('-l', '--line', help="A single command to send to the device", default="", required=False)
 parser.add_argument('-r', '--reset', help="Reset device before running commands", action='store_true', required=False)
 
-
-                
-
 args = parser.parse_args()
 
+#print an error message if neither a line or macro file is specified
 if args.line == "" and args.filename == "":
     parser.error("either -l or -f must be specified")
     
@@ -26,6 +24,7 @@ rm = visa.ResourceManager('@py')
 inst = rm.open_resource("TCPIP::"+args.address+"::INSTR")
 print(inst.query("*IDN?"))
 
+#reset the device
 if args.reset:
     print("Resetting device...")
     inst.write("*RST")
@@ -36,10 +35,12 @@ inst.write("DISP:TEXT '"+message+"'")
 
 #sent commands to device
 
+#single line
 if args.line !="":
     inst.write(args.line)
     print(args.line)
 
+#macro file
 if args.filename != "":
     for line in open(args.filename):
         sleep(0.1)
@@ -49,16 +50,18 @@ if args.filename != "":
         inst.write(line.strip())
         print(line.strip())
 
-
+#clear message
 inst.write("DISP:TEXT ''")
 
+#check for errors
 instrument_err = "error"
 while instrument_err != '+0,"No error"\n':
     inst.write('SYST:ERR?')
     instrument_err = inst.read()
-    if instrument_err[:2] == "+0":
+    if instrument_err[:2] == "+0": #ignore no error message
         continue;
     print(instrument_err)
 
 
+#close device connection
 inst.close()
