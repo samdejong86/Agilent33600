@@ -13,8 +13,14 @@ parser.add_argument('-f','--filename', help='File containing arbitrary waveform'
 parser.add_argument('-a','--address', help="Address of device", default="142.104.60.122", required=False)
 parser.add_argument('-v','--pulseheight', help="Pulse height of arb", default="0.1", required=False)
 parser.add_argument('-m','--macro', help="Generate a macro for loading this arb", action='store_true', required=False)
+parser.add_argument('-d','--delimiter', help="Input file delimiter", default=" ", required=False)
+
 
 args = parser.parse_args()
+
+if args.delimiter=="tab":
+    args.delimiter="\t"
+
 
 
 name=os.path.splitext(os.path.basename(args.filename))[0]
@@ -29,7 +35,7 @@ tlast=-1
 
 arb=[]
 with open(args.filename,'r') as f:
-    reader=csv.reader(f,delimiter='\t')
+    reader=csv.reader(f,delimiter=args.delimiter)
     for t,p in reader:
         arb.append(float(p))
         if tlast != -1:
