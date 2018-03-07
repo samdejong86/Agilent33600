@@ -7,6 +7,10 @@ parser = argparse.ArgumentParser(description='Send a list of messages to an Agil
 parser.add_argument('-f','--filename', help='Macro file containing SCPI commands', default="", required=False)
 parser.add_argument('-a','--address', help="Address of device", default="142.104.60.122", required=False)
 parser.add_argument('-l', '--line', help="A single command to send to the device", default="", required=False)
+parser.add_argument('-r', '--reset', help="Reset device before running commands", action='store_true', required=False)
+
+
+                
 
 args = parser.parse_args()
 
@@ -22,13 +26,13 @@ rm = visa.ResourceManager('@py')
 inst = rm.open_resource("TCPIP::"+args.address+"::INSTR")
 print(inst.query("*IDN?"))
 
+if args.reset:
+    print("Resetting device...")
+    inst.write("*RST")
+
 #sent start control message
 message="Controlling\nRemotely"
 inst.write("DISP:TEXT '"+message+"'")
-
-
-#clear any sweeps
-inst.write("SOURCE2:FREQUENCY:MODE FIX")
 
 #sent commands to device
 
