@@ -47,8 +47,9 @@ if args.filename != "":
         #ignore commented lines
         if line[0] == '#':
             continue;
-        inst.write(line.strip())
-        print(line.strip())
+        writeString = line.split("#")[0].strip()
+        inst.write(writeString)
+        print(writeString)
 
 #clear message
 inst.write("DISP:TEXT ''")
