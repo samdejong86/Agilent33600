@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import visa
 from time import sleep
 import argparse
