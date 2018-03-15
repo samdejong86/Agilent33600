@@ -53,18 +53,14 @@ if args.filename != "":
         inst.write(writeString)
         print(writeString)
 
+        #check if there was an error
+        inst.write('SYST:ERR?')
+        instrument_err = inst.read()
+        if not instrument_err[:2] == "+0": # the no error message starts with '+0'
+            print(instrument_err) #if there was an error, print it.
+
 #clear message
 inst.write("DISP:TEXT ''")
-
-#check for errors
-instrument_err = "error"
-while instrument_err != '+0,"No error"\n':
-    inst.write('SYST:ERR?')
-    instrument_err = inst.read()
-    if instrument_err[:2] == "+0": #ignore no error message
-        continue;
-    print(instrument_err)
-
 
 #close device connection
 inst.close()
