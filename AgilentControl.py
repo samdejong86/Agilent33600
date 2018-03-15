@@ -10,12 +10,10 @@ parser.add_argument('-f','--filename', help='Macro file containing SCPI commands
 parser.add_argument('-a','--address', help="Address of device", default="142.104.60.122", required=False)
 parser.add_argument('-l', '--line', help="A single command to send to the device", default="", required=False)
 parser.add_argument('-r', '--reset', help="Reset device before running commands", action='store_true', required=False)
+parser.add_argument('-e', '--clearErrors', help="Readout any errors in the error queue", action='store_true', required=False)
 
 args = parser.parse_args()
 
-#print an error message if neither a line or macro file is specified
-if args.line == "" and args.filename == "":
-    parser.error("either -l or -f must be specified")
     
 
 
@@ -24,6 +22,24 @@ rm = visa.ResourceManager('@py')
 
 #connect to the device
 inst = rm.open_resource("TCPIP::"+args.address+"::INSTR")
+
+if args.clearErrors:
+    instrument_err = "error"
+    while instrument_err != '+0,"No error"\n':
+        inst.write('SYST:ERR?')
+        instrument_err = inst.read()
+        if instrument_err[:4] == "-257":  #directory exists message, don't display
+            continue;
+        if instrument_err[:2] == "+0":    #no error
+            continue;
+        print(instrument_err)
+    exit()
+
+
+#print an error message if neither a line or macro file is specified
+if args.line == "" and args.filename == "":
+    parser.error("either -l or -f must be specified")
+
 print(inst.query("*IDN?"))
 
 #reset the device
